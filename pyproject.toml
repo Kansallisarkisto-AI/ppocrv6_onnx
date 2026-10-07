@@ -12,22 +12,22 @@ dependencies = [
     "pyclipper>=1.3",
 ]
 
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
+
 [project.optional-dependencies]
 coreml = ["onnxruntime-coreml"]
 
 [project.urls]
-Repository = "https://github.com/AIwork4me/ppocrv6_onnx"
-
-[project.classifiers]
-Development Status = "4 - Beta"
-Intended Audience = "Developers"
-Intended Audience = "Science/Research"
-License = "MIT"
-Operating System = "OS Independent"
-Programming Language = "Python :: 3"
-Programming Language = "Python :: 3.9"
-Programming Language = "Python :: 3.10"
-Programming Language = "Python :: 3.11"
-Programming Language = "Python :: 3.12"
-Topic = "Scientific/Engineering :: Artificial Intelligence"
-Topic = "Scientific/Engineering :: Image Recognition"
+Repository = "https://github.com/Kansallisarkisto-AI/ppocrv6_onnx"
