@@ -33,6 +33,10 @@ __all__ = ["PPOCRv6Onnx", "OCRResult"]
 
 logger = logging.getLogger(__name__)
 
+root = Path(__file__).resolve().parent
+
+DEFAULT_PPOCRV6_DICT = str(root / "models" / "ppocrv6_dict.txt.txt")
+
 # ---------------------------------------------------------------------------
 # 公共类型
 # ---------------------------------------------------------------------------
@@ -543,6 +547,8 @@ class CTCLabelDecode:
 
     def __init__(self, character_dict_path: str) -> None:
         self._blank = 0
+        if character_dict_path is None:
+            character_dict_path = DEFAULT_PPOCRV6_DICT
         with open(character_dict_path, encoding="utf-8") as f:
             raw = tuple(line.rstrip("\n\r") for line in f)
         self._chars: Tuple[str, ...] = ("blank", *raw)
@@ -659,6 +665,9 @@ class PPOCRv6Onnx:
         # ── 参数校验 ──
         _require_file(det_model_path, "det_model_path")
         _require_file(rec_model_path, "rec_model_path")
+
+        if rec_char_dict_path is None:
+            rec_char_dict_path = DEFAULT_PPOCRV6_DICT
         _require_file(rec_char_dict_path, "rec_char_dict_path")
         if rec_batch_size < 1:
             raise ValueError(f"rec_batch_size must be >= 1, got {rec_batch_size}")
@@ -848,7 +857,7 @@ def _main(argv: Optional[List[str]] = None) -> None:
         help="recognition ONNX model path",
     )
     ap.add_argument(
-        "--dict", default=str(root / "models" / "ppocrv6_dict.txt.txt"),
+        "--dict", default=str(root / "models" / "ppocrv6_dict.txt"),
         help="character dictionary path",
     )
     ap.add_argument(
