@@ -848,7 +848,7 @@ def _main(argv: Optional[List[str]] = None) -> None:
         help="recognition ONNX model path",
     )
     ap.add_argument(
-        "--dict", default=str(root / "models" / "rec_char_dict.txt"),
+        "--dict", default=str(root / "models" / "ppocrv6_dict.txt.txt"),
         help="character dictionary path",
     )
     ap.add_argument(
