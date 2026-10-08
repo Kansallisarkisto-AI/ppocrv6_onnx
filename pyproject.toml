@@ -41,7 +41,6 @@ coreml = ["onnxruntime-coreml"]
 cpu = ["onnxruntime>=1.28"]
 openvino = ["onnxruntime-openvino>=1.28"]
 gpu = ["onnxruntime-gpu>=1.20"]
-coreml = ["onnxruntime-coreml"]
 
 [project.urls]
 Repository = "https://github.com/Kansallisarkisto-AI/ppocrv6_onnx"
