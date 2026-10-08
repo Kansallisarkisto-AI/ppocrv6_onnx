@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 root = Path(__file__).resolve().parent
 
-DEFAULT_PPOCRV6_DICT = str(root / "models" / "ppocrv6_dict.txt.txt")
+DEFAULT_PPOCRV6_DICT = str(root / "models" / "ppocrv6_dict.txt")
 
 # ---------------------------------------------------------------------------
 # 公共类型
