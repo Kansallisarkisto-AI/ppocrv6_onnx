@@ -479,6 +479,11 @@ class RecPreProcess:
     def __init__(self, rec_image_shape: Tuple[int, int, int] = (3, 48, 320)) -> None:
         self._c, self._h, self._w_min = rec_image_shape
         self._max_w = 3200
+        # 256 项 float32 查表：与 _resize_norm 中 (x/255 - 0.5)/0.5 逐元素完全相同的
+        # float32 运算序列，因此结果逐位一致，但只需一次查表而不是多遍浮点运算。
+        _x = np.arange(256, dtype=np.float32)
+        _x *= 1.0 / 255.0
+        self._lut = (_x - 0.5) / 0.5
 
     def __repr__(self) -> str:
         return f"RecPreProcess(C={self._c}, H={self._h}, W_min={self._w_min})"
@@ -520,22 +525,43 @@ class RecPreProcess:
     def __call__(self, imgs: List[np.ndarray]) -> np.ndarray:
         """批量预处理。
 
+        输出与逐张调用 ``_resize_single`` 再 pad + stack 的结果逐位一致，
+        但整批只分配一次输出张量（np.zeros 为惰性清零，填充区域不会被触碰），
+        每张图直接写入其切片，省去逐张的整宽画布、np.pad、np.stack 与 astype 拷贝。
+
         Args:
             imgs: BGR 图像列表。
 
         Returns:
             批张量 (N, C, H, W_max) float32。
         """
-        resized = [self._resize_single(img) for img in imgs]
-        max_w = max(r.shape[2] for r in resized)
-        padded = []
-        for r in resized:
-            pad = max_w - r.shape[2]
-            if pad > 0:
-                r = np.pad(r, ((0, 0), (0, 0), (0, pad)),
-                           mode="constant", constant_values=0)
-            padded.append(r)
-        return np.stack(padded, axis=0).astype(np.float32, copy=False)
+        h = self._h
+        plan: List[int] = []
+        batch_w = 0
+        for img in imgs:
+            ih, iw = img.shape[:2]
+            max_ratio = max(self._w_min / h, iw / float(ih))
+            target_w = int(h * max_ratio)
+            if target_w > self._max_w:
+                actual_w = target_w = self._max_w
+            else:
+                actual_w = min(int(math.ceil(h * iw / float(ih))), target_w)
+            plan.append(actual_w)
+            if target_w > batch_w:
+                batch_w = target_w
+
+        out = np.zeros((len(imgs), self._c, h, batch_w), dtype=np.float32)
+        lut = self._lut
+        for i, (img, actual_w) in enumerate(zip(imgs, plan)):
+            resized = cv2.resize(img, (actual_w, h))
+            if resized.dtype == np.uint8:
+                # (h, w, 3) uint8 -> float32 归一化到 [-1, 1]，再转 CHW 写入
+                out[i, :, :, :actual_w] = cv2.LUT(resized, lut).transpose(2, 0, 1)
+            else:  # 非 uint8 输入：沿用原始浮点路径，保持行为不变
+                chw = np.transpose(resized.astype(np.float32, copy=False), (2, 0, 1))
+                chw = chw * (1.0 / 255.0)
+                out[i, :, :, :actual_w] = (chw - 0.5) / 0.5
+        return out
 
 
 # ============================================================
@@ -576,19 +602,20 @@ class CTCLabelDecode:
         Returns:
             [(text, confidence), ...] 与 batch 等长。
         """
+        # 整批一次性计算 “去连续重复” 与 “去 blank” 掩码
+        keep = np.ones(indices.shape, dtype=bool)
+        keep[:, 1:] = indices[:, 1:] != indices[:, :-1]
+        keep &= indices != self._blank
+
         results: List[Tuple[str, float]] = []
         chars = self._chars
         for b in range(len(indices)):
-            seq = indices[b]
-            keep = np.ones(len(seq), dtype=bool)
-            keep[1:] = seq[1:] != seq[:-1]  # 去连续重复
-            keep &= seq != self._blank       # 去 blank
-
-            text = "".join(chars[idx] for idx in seq[keep])
+            k = keep[b]
+            text = "".join(chars[idx] for idx in indices[b][k])
             if probs is None:
                 score = 1.0
-            elif keep.any():
-                score = float(probs[b][keep].mean())
+            elif k.any():
+                score = float(probs[b][k].mean())
             else:
                 score = 0.0
             results.append((text, score))
@@ -605,7 +632,9 @@ class CTCLabelDecode:
         """
         output = np.asarray(model_output)
         indices = output.argmax(axis=-1)
-        probs = output.max(axis=-1)
+        # 最大值直接按 argmax 位置取值，等价于 output.max(axis=-1)，
+        # 但避免再整体扫描一遍 (batch, seq_len, num_classes) 的大张量
+        probs = np.take_along_axis(output, indices[..., None], axis=-1)[..., 0]
         decoded = self.decode(indices, probs)
         return [d[0] for d in decoded], [d[1] for d in decoded]
 
