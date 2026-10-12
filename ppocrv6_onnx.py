@@ -22,7 +22,7 @@ import logging
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 import cv2
 import numpy as np
@@ -476,8 +476,11 @@ class RecPreProcess:
     归一化到 [-1, 1]，批内右侧零填充对齐。
     """
 
-    def __init__(self, rec_image_shape: Tuple[int, int, int] = (3, 48, 320)) -> None:
+    def __init__(self, rec_image_shape: Tuple[int, int, int] = (3, 48, 320),
+                 width_buckets: Optional[Sequence[int]] = None) -> None:
         self._c, self._h, self._w_min = rec_image_shape
+
+        self._buckets = sorted(set(int(b) for b in width_buckets)) if width_buckets else None
         self._max_w = 3200
         # 256 项 float32 查表：与 _resize_norm 中 (x/255 - 0.5)/0.5 逐元素完全相同的
         # float32 运算序列，因此结果逐位一致，但只需一次查表而不是多遍浮点运算。
@@ -549,6 +552,9 @@ class RecPreProcess:
             plan.append(actual_w)
             if target_w > batch_w:
                 batch_w = target_w
+
+        if self._buckets:
+            batch_w = next((b for b in self._buckets if b >= batch_w), batch_w)
 
         out = np.zeros((len(imgs), self._c, h, batch_w), dtype=np.float32)
         lut = self._lut
