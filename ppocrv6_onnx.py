@@ -472,16 +472,20 @@ def crop_by_polys(
 class RecPreProcess:
     """识别模型预处理：OCRReisizeNormImg + ToBatch。
 
-    固定高度 48，宽度按宽高比动态计算（下限 320，上限 3200），
+    固定高度 48，宽度按宽高比动态计算（下限 320，上限 max_width，默认 3200），
     归一化到 [-1, 1]，批内右侧零填充对齐。
     """
 
     def __init__(self, rec_image_shape: Tuple[int, int, int] = (3, 48, 320),
-                 width_buckets: Optional[Sequence[int]] = None) -> None:
+                 width_buckets: Optional[Sequence[int]] = None,
+                 max_width: int = 3200) -> None:
         self._c, self._h, self._w_min = rec_image_shape
+        if max_width < self._w_min:
+            raise ValueError(
+                f"max_width ({max_width}) must be >= the minimum width ({self._w_min})")
 
         self._buckets = sorted(set(int(b) for b in width_buckets)) if width_buckets else None
-        self._max_w = 3200
+        self._max_w = int(max_width)
         # 256 项 float32 查表：与 _resize_norm 中 (x/255 - 0.5)/0.5 逐元素完全相同的
         # float32 运算序列，因此结果逐位一致，但只需一次查表而不是多遍浮点运算。
         _x = np.arange(256, dtype=np.float32)
