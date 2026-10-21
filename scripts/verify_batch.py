@@ -1,5 +1,5 @@
 """
-批量精度对比：纯 ONNXRuntime API vs PaddleX（多图片）。
+Batch accuracy comparison: pure ONNXRuntime API vs PaddleX (multiple images).
 
 Usage: cd to project root, then:
     python scripts/verify_batch.py

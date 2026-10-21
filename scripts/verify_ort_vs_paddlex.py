@@ -1,5 +1,5 @@
 """
-PP-OCRv6 纯 ONNXRuntime API vs PaddleX 精度对比验证（需要 PaddleX）。
+PP-OCRv6 pure ONNXRuntime API vs PaddleX accuracy verification (requires PaddleX).
 
 Usage: cd to project root, then:
     python scripts/verify_ort_vs_paddlex.py
