@@ -29,7 +29,7 @@ def main() -> None:
     if missing:
         print("Error: Model files not found. Please download models first:")
         print("\n".join(missing))
-        print("\nDownload instructions: https://github.com/.../README.md#quick-start")
+        print("\nDownload instructions: https://github.com/Kansallisarkisto-AI/ppocrv6_onnx#quick-start")
         sys.exit(1)
 
     # ── Check image ──

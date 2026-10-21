@@ -8,7 +8,23 @@ version = "0.1.0"
 description = "Pure ONNX Runtime implementation of PP-OCRv6 text detection & recognition"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
+authors = [
+    { name = "John Mäkelä", email = "john.makela@kansallisarkisto.fi" },
+    { name = "alex (https://github.com/AIwork4me)" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
 dependencies = [
     "opencv-python-headless>=4.5",
     "numpy>=1.21",
@@ -22,20 +38,6 @@ packages = ["ppocrv6_onnx_data"]
 [tool.setuptools.package-data]
 ppocrv6_onnx_data = ["*.txt"]
 
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Science/Research",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Scientific/Engineering :: Image Recognition",
-]
-
 [project.optional-dependencies]
 coreml = ["onnxruntime-coreml"]
 cpu = ["onnxruntime>=1.28"]
@@ -44,3 +46,4 @@ gpu = ["onnxruntime-gpu>=1.20"]
 
 [project.urls]
 Repository = "https://github.com/Kansallisarkisto-AI/ppocrv6_onnx"
+Upstream = "https://github.com/AIwork4me/ppocrv6_onnx"

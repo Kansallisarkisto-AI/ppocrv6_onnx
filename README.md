@@ -2,7 +2,7 @@
 
 > **Pure ONNX Runtime** implementation of PP-OCRv6. Zero PaddlePaddle. Bit-exact accuracy. 3× faster.
 
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![ONNX Runtime](https://img.shields.io/badge/onnxruntime-1.26%2B-orange)](https://onnxruntime.ai/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![中文](https://img.shields.io/badge/中文-README_zh-red)](README_zh.md)
@@ -42,7 +42,7 @@ This repo gives you a **single-file, drop-in module** that matches PaddleX outpu
 ### 1. Install dependencies
 
 ```bash
-pip install onnxruntime opencv-python numpy pyclipper
+pip install onnxruntime opencv-python-headless numpy pyclipper
 ```
 
 That's it. No PaddlePaddle. No PaddleX.
@@ -257,6 +257,7 @@ ocr = PPOCRv6Onnx(
 - **PP-OCRv6** by Baidu PaddlePaddle team
 - **Differentiable Binarization** — Liao et al.
 - **CRNN + CTC** — Shi et al.
+- Originally created by alex ([AIwork4me/ppocrv6_onnx](https://github.com/AIwork4me/ppocrv6_onnx)); this fork is maintained by John Mäkelä, National Archives of Finland
 - Implementation inspired by [PaddleX](https://github.com/PaddlePaddle/PaddleX)
 
 ---

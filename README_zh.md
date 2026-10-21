@@ -2,7 +2,7 @@
 
 > **纯 ONNX Runtime** 实现 PP-OCRv6。零 PaddlePaddle 依赖。精度 bit-exact。速度提升 3 倍。
 
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![ONNX Runtime](https://img.shields.io/badge/onnxruntime-1.26%2B-orange)](https://onnxruntime.ai/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![English](https://img.shields.io/badge/English-README-blue)](README.md)
@@ -42,7 +42,7 @@ PaddleX 功能强大——但它需要 **2 GB+ 的依赖链**（PaddlePaddle + �
 ### 1. 安装依赖
 
 ```bash
-pip install onnxruntime opencv-python numpy pyclipper
+pip install onnxruntime opencv-python-headless numpy pyclipper
 ```
 
 仅此而已。不需要 PaddlePaddle。不需要 PaddleX。
@@ -257,6 +257,7 @@ ocr = PPOCRv6Onnx(
 - **PP-OCRv6** — 百度 PaddlePaddle 团队
 - **Differentiable Binarization** — Liao et al.
 - **CRNN + CTC** — Shi et al.
+- 原作者 alex（[AIwork4me/ppocrv6_onnx](https://github.com/AIwork4me/ppocrv6_onnx)）；本分支由 John Mäkelä（芬兰国家档案馆）维护
 - 实现参考 [PaddleX](https://github.com/PaddlePaddle/PaddleX)
 
 ---
