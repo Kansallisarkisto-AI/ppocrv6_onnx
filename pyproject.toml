@@ -7,8 +7,8 @@ name = "ppocrv6-onnx"
 version = "0.1.0"
 description = "Pure ONNX Runtime implementation of PP-OCRv6 text detection & recognition"
 readme = "README.md"
-license = {text = "MIT"}
-requires-python = ">=3.9"
+license = "MIT"
+requires-python = ">=3.12"
 dependencies = [
     "opencv-python-headless>=4.5",
     "numpy>=1.21",
@@ -17,10 +17,10 @@ dependencies = [
 
 [tool.setuptools]
 py-modules = ["ppocrv6_onnx"]
-packages = ["models"]
+packages = ["ppocrv6_onnx_data"]
 
 [tool.setuptools.package-data]
-models = ["*.txt"]
+ppocrv6_onnx_data = ["*.txt"]
 
 classifiers = [
     "Development Status :: 4 - Beta",
